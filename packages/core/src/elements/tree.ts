@@ -19,7 +19,7 @@ export function tree(ctx: Ctx, x: number, y: number, size: number): string {
     const t = j / segs
     trunk.push([x + lean * size * t + (noise(t * 3, ch) - 0.5) * size * 0.15, y - size * t])
   }
-  out.push(fillPath(brush(trunk, { width: size * 0.07, noise, channel: ch, taper: 0.2 }), palette.ink))
+  out.push(fillPath(brush(trunk, { width: size * 0.05, noise, channel: ch, taper: 0.35 }), palette.ink))
 
   const at = (t: number) => trunk[Math.round(t * segs)]
 

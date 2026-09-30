@@ -1,14 +1,15 @@
-import { mountain } from './elements/mountain'
-import { tree } from './elements/tree'
-import { boat, water } from './elements/water'
+import { resolveAnimate, Timeline } from './anim'
+import { compose, resolveDistance } from './compose'
 import { createNoise } from './noise'
 import { resolvePalette } from './palettes'
 import { hashSeed, randomSeed, Rng } from './rng'
+import { makeCeiling, makeInSpace, resolveSpace } from './space'
 import type { Ctx, LandscapeOptions } from './types'
 
 let instanceCount = 0
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
+const r1 = (n: number) => Math.round(n * 10) / 10
 
 /**
  * Render a complete landscape to an SVG string. Pure apart from unique element ids,
@@ -19,74 +20,45 @@ export function renderSVG(options: LandscapeOptions = {}): string {
   const W = options.width ?? 1600
   const H = options.height ?? 600
   const D = clamp01(options.density ?? 0.6)
-  const showTrees = options.trees ?? true
-  const showWater = options.water ?? true
   const showGrain = options.grain ?? true
   const label = options.label ?? 'Generated Chinese ink landscape'
 
   const rng = new Rng(seed)
   const palette = resolvePalette(options.palette)
+  const space = resolveSpace(options.space)
+  const anim = resolveAnimate(options.animate)
   const uid = `ss${hashSeed(seed).toString(36)}${(instanceCount++).toString(36)}`
+  let idCount = 0
   const ctx: Ctx = {
     rng,
     noise: createNoise(rng),
     palette,
-    ids: { mist: `${uid}m`, grain: `${uid}g` },
+    ids: { mist: `${uid}m`, grain: `${uid}g`, space: `${uid}s`, fog: `${uid}f` },
+    uid: () => `${uid}c${(idCount++).toString(36)}`,
+    tl: anim.reveal ? new Timeline() : null,
+    motion: anim.motion,
+    W,
+    H,
+    span: Math.max(W, H * 1.6),
+    ceiling: makeCeiling(space, W, H),
+    inSpace: makeInSpace(space, W, H),
   }
 
-  const layers: string[] = []
+  const distance = resolveDistance(options.distance, rng)
+  const layers = compose(ctx, distance, {
+    D,
+    trees: options.trees ?? true,
+    water: options.water ?? true,
+  })
 
-  // Far range: soft washes near the horizon.
-  const far: string[] = []
-  const farCount = Math.round(3 + D * 4)
-  for (let i = 0; i < farCount; i++) {
-    far.push(mountain(ctx, {
-      x: rng.range(-0.1, 1.1) * W,
-      y: H * rng.range(0.52, 0.6),
-      w: rng.range(0.25, 0.55) * W,
-      h: rng.range(0.18, 0.38) * H,
-      detail: 0,
-      trees: false,
-      washOnly: true,
-    }))
-  }
-  layers.push(`<g opacity="0.45">${far.join('')}</g>`)
-
-  // Middle range: textured, lighter ink.
-  const mid: string[] = []
-  const midCount = Math.round(1 + D * 3)
-  for (let i = 0; i < midCount; i++) {
-    mid.push(mountain(ctx, {
-      x: W * ((i + rng.range(0.2, 0.8)) / midCount),
-      y: H * rng.range(0.68, 0.74),
-      w: rng.range(0.25, 0.45) * W,
-      h: rng.range(0.25, 0.45) * H,
-      detail: D * 0.6,
-      trees: showTrees,
-    }))
-  }
-  layers.push(`<g opacity="0.7">${mid.join('')}</g>`)
-
-  // Water and a boat.
-  if (showWater) {
-    layers.push(water(ctx, H * 0.74, H, W))
-    if (rng.chance(0.85)) layers.push(boat(ctx, W * rng.range(0.3, 0.7), H * rng.range(0.8, 0.9), H * 0.1))
-  }
-
-  // Near range: one or two dark masses anchored to a side, framing the scene.
-  const nearCount = D > 0.5 ? 2 : 1
-  const firstSide = rng.chance(0.5) ? -1 : 1
-  for (let i = 0; i < nearCount; i++) {
-    const side = i === 0 ? firstSide : -firstSide
-    const x = side < 0 ? rng.range(0, 0.2) * W : rng.range(0.8, 1) * W
-    const h = rng.range(0.4, 0.65) * H * (i === 0 ? 1 : 0.7)
-    layers.push(mountain(ctx, { x, y: H * 1.02, w: rng.range(0.35, 0.55) * W, h, detail: D, trees: showTrees }))
-    if (showTrees) {
-      const clump = rng.int(1, 3)
-      for (let k = 0; k < clump; k++) {
-        layers.push(tree(ctx, x + rng.range(-0.08, 0.08) * W, H * rng.range(0.94, 1), H * rng.range(0.14, 0.24)))
-      }
-    }
+  // A soft veil of paper-coloured mist over the space, so text stays legible.
+  let veil = ''
+  if (space) {
+    const padX = space.width * W * 0.2
+    const padY = space.height * H * 0.2
+    veil =
+      `<rect x="${r1(space.x * W - padX)}" y="${r1(space.y * H - padY)}" ` +
+      `width="${r1(space.width * W + padX * 2)}" height="${r1(space.height * H + padY * 2)}" fill="url(#${ctx.ids.space})"/>`
   }
 
   const grainSeed = rng.int(0, 9999)
@@ -97,6 +69,18 @@ export function renderSVG(options: LandscapeOptions = {}): string {
     `<stop offset="0.55" stop-color="${palette.wash}" stop-opacity="0.1"/>` +
     `<stop offset="1" stop-color="${palette.wash}" stop-opacity="0"/>` +
     `</linearGradient>` +
+    `<radialGradient id="${ctx.ids.fog}">` +
+    `<stop offset="0" stop-color="${palette.paper}" stop-opacity="0.9"/>` +
+    `<stop offset="0.5" stop-color="${palette.paper}" stop-opacity="0.5"/>` +
+    `<stop offset="1" stop-color="${palette.paper}" stop-opacity="0"/>` +
+    `</radialGradient>` +
+    (space
+      ? `<radialGradient id="${ctx.ids.space}">` +
+        `<stop offset="0" stop-color="${palette.paper}" stop-opacity="0.85"/>` +
+        `<stop offset="0.6" stop-color="${palette.paper}" stop-opacity="0.6"/>` +
+        `<stop offset="1" stop-color="${palette.paper}" stop-opacity="0"/>` +
+        `</radialGradient>`
+      : '') +
     (showGrain
       ? `<filter id="${ctx.ids.grain}" x="0" y="0" width="100%" height="100%">` +
         `<feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="${grainSeed}" stitchTiles="stitch"/>` +
@@ -108,13 +92,15 @@ export function renderSVG(options: LandscapeOptions = {}): string {
 
   const grain = showGrain ? `<rect width="${W}" height="${H}" filter="url(#${ctx.ids.grain})"/>` : ''
 
-  return (
+  const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" height="100%" ` +
-    `preserveAspectRatio="xMidYMid slice" role="img" aria-label="${label.replace(/"/g, '&quot;')}">` +
+    `preserveAspectRatio="xMidYMid slice" role="img" aria-label="${label.replace(/"/g, '&quot;')}" ` +
+    `data-distance="${distance}">` +
     defs +
     `<rect width="${W}" height="${H}" fill="${palette.paper}"/>` +
     layers.join('') +
+    veil +
     grain +
     `</svg>`
-  )
+  return ctx.tl ? ctx.tl.resolve(svg, anim.duration) : svg
 }

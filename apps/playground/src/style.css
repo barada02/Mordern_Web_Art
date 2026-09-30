@@ -60,15 +60,49 @@ main {
   gap: 16px;
 }
 
-.stage {
+.stage-wrap {
+  position: relative;
   aspect-ratio: 16 / 6;
-  min-height: 220px;
+  width: 100%;
+  margin-inline: auto;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--line);
 }
 
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
 .stage svg { display: block; }
+
+.headline {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 8px;
+  pointer-events: none;
+}
+
+.headline[hidden] { display: none; }
+
+.headline h2 {
+  margin: 0;
+  font-family: 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  font-size: clamp(1.1rem, 3.2vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.headline p {
+  margin: 0.4em 0 0;
+  font-size: clamp(0.75rem, 1.3vw, 1rem);
+  opacity: 0.75;
+}
 
 .controls {
   display: grid;
