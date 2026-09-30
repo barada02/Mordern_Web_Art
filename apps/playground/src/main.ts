@@ -23,6 +23,8 @@ const trees = $<HTMLInputElement>('trees')
 const water = $<HTMLInputElement>('water')
 const grain = $<HTMLInputElement>('grain')
 const showText = $<HTMLInputElement>('showText')
+const animate = $<HTMLInputElement>('animate')
+const pauseBtn = $<HTMLButtonElement>('pause')
 const wrap = document.querySelector<HTMLElement>('.stage-wrap')!
 const headline = $<HTMLElement>('headline')
 const code = $<HTMLElement>('code')
@@ -32,7 +34,7 @@ for (const name of Object.keys(palettes)) paletteSelect.add(new Option(name, nam
 // Seed from the URL hash so paintings are shareable.
 seedInput.value = decodeURIComponent(location.hash.slice(1)) || randomSeed()
 
-const DEFAULTS: LandscapeOptions = { palette: 'sumi', distance: 'auto', space: 'none', density: 0.6, trees: true, water: true, grain: true }
+const DEFAULTS: LandscapeOptions = { palette: 'sumi', distance: 'auto', space: 'none', density: 0.6, trees: true, water: true, grain: true, animate: false }
 
 const read = (): LandscapeOptions => ({
   seed: seedInput.value || '0',
@@ -43,6 +45,7 @@ const read = (): LandscapeOptions => ({
   trees: trees.checked,
   water: water.checked,
   grain: grain.checked,
+  animate: animate.checked,
 })
 
 function applyAspect() {
@@ -87,10 +90,32 @@ function render() {
 }
 
 $('controls').addEventListener('input', (e) => {
+  // While dragging the slider only update its label; redraw on release ('change' below),
+  // otherwise an animated painting would restart on every tick.
+  if (e.target === density) {
+    densityOut.value = Number(density.value).toFixed(2)
+    return
+  }
+  // The sample text is playground-only; no need to repaint.
+  if (e.target === showText) {
+    placeHeadline(read())
+    return
+  }
   // Aspect changes resize the element; the library redraws itself via ResizeObserver.
   if (e.target === aspectSelect) applyAspect()
   render()
 })
+density.addEventListener('change', render)
+$('replay').addEventListener('click', () => landscape.replay())
+
+pauseBtn.addEventListener('click', () => {
+  const paused = pauseBtn.getAttribute('aria-pressed') !== 'true'
+  pauseBtn.setAttribute('aria-pressed', String(paused))
+  pauseBtn.textContent = paused ? 'Play' : 'Pause'
+  if (paused) landscape.pause()
+  else landscape.play()
+})
+
 $('shuffle').addEventListener('click', () => {
   seedInput.value = randomSeed()
   render()
