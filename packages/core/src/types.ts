@@ -1,3 +1,4 @@
+import type { Timeline } from './anim'
 import type { Noise2 } from './noise'
 import type { Rng } from './rng'
 
@@ -30,6 +31,15 @@ export interface SpaceBox {
   height: number
 }
 
+export interface AnimateOptions {
+  /** Paint the scene in, back to front, like a brush at work. Default true. */
+  reveal?: boolean
+  /** Endless ambient motion: drifting mist, shimmering water, a drifting boat. Default true. */
+  motion?: boolean
+  /** Length of the reveal in seconds. Default 6. */
+  duration?: number
+}
+
 export interface LandscapeOptions {
   /** Same seed + same options + same aspect ratio → same painting. Defaults to a random seed. */
   seed?: string | number
@@ -53,6 +63,11 @@ export interface LandscapeOptions {
   grain?: boolean
   /** Accessible label for the SVG. */
   label?: string
+  /**
+   * Animate the painting (off by default). `true` enables reveal + ambient motion.
+   * `createLandscape` turns it off for users who prefer reduced motion.
+   */
+  animate?: boolean | AnimateOptions
 }
 
 /** Shared state passed to every element generator. */
@@ -60,7 +75,13 @@ export interface Ctx {
   rng: Rng
   noise: Noise2
   palette: Required<Palette>
-  ids: { mist: string; grain: string; space: string }
+  ids: { mist: string; grain: string; space: string; fog: string }
+  /** A fresh unique element id. */
+  uid: () => string
+  /** Reveal timeline, or null when not revealing. */
+  tl: Timeline | null
+  /** Whether ambient motion is on. */
+  motion: boolean
   /** Drawing size in viewBox units. */
   W: number
   H: number

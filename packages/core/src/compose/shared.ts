@@ -1,3 +1,4 @@
+import { fadeIn } from '../anim'
 import { mountain } from '../elements/mountain'
 import { tree } from '../elements/tree'
 import type { Ctx } from '../types'
@@ -64,7 +65,7 @@ export function treeClump(ctx: Ctx, x: number, y: number, count: number, size: R
   for (let k = 0; k < count; k++) {
     out += tree(ctx, x + rng.range(-0.05, 0.05) * span, y + rng.range(-0.02, 0.02) * H, rng.range(size[0], size[1]) * H)
   }
-  return out
+  return fadeIn(ctx, out, 0.3, 0.9)
 }
 
 export const group = (opacity: number, content: string) =>

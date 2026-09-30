@@ -1,3 +1,4 @@
+import { mistBand } from '../elements/mist'
 import { mountain } from '../elements/mountain'
 import { boat, water } from '../elements/water'
 import type { Ctx } from '../types'
@@ -30,8 +31,11 @@ export function high(ctx: Ctx, s: Scene): string[] {
     dir = dir === -1 ? 1 : -1
   }
   out.push(group(0.7, flanks))
+  out.push(mistBand(ctx, H * 0.86, H * 0.04))
 
   out.push(group(0.92, mountain(ctx, { x: mainX, y: H * 0.9, w: span * rng.range(0.24, 0.34), h: mainH, detail: s.D, trees: s.trees })))
+  // A belt of cloud around the main peak's waist.
+  out.push(mistBand(ctx, H * 0.9 - mainH * rng.range(0.3, 0.5), H * 0.05, 0.8))
 
   if (s.water) {
     out.push(water(ctx, H * 0.9, H, W))

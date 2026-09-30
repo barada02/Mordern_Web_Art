@@ -1,3 +1,4 @@
+import { mistBand } from '../elements/mist'
 import { mountain } from '../elements/mountain'
 import { boat, water } from '../elements/water'
 import type { Ctx } from '../types'
@@ -28,6 +29,7 @@ export function deep(ctx: Ctx, s: Scene): string[] {
       row += mountain(ctx, { x: ox, y: y + H * 0.02, w: w * 0.7, h: h * 0.6, detail, trees: s.trees && t > 0.3 })
     }
     out.push(group(0.35 + 0.65 * t, row))
+    if (t < 0.75) out.push(mistBand(ctx, y - h * 0.1, H * 0.03, 0.6))
 
     if (s.water && r === waterRow) {
       out.push(water(ctx, y, H, W))

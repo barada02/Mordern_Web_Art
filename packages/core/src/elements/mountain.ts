@@ -1,3 +1,4 @@
+import { fadeIn, wipe } from '../anim'
 import { brush, pathFromPoints, type Pt } from '../stroke'
 import type { Ctx } from '../types'
 import { circle, fillPath } from './svg'
@@ -39,28 +40,31 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
     xs.push(o.x + (t - 0.5) * o.w)
   }
 
-  // Keep out of the text space: first shrink the whole mountain (keeps its shape),
-  // but never below half size; then clamp whatever still pokes into the space.
-  const allowed = xs.map((x) => o.y - ctx.ceiling(x))
+
+  // Keep out of the text space. First shrink the whole mountain (keeps its shape, never
+  // below half size), then soft-limit what still pokes in. The limit itself undulates with
+  // noise, so a squashed ridge rolls gently under the space instead of running flat.
+  const allowed = xs.map((x, i) => (o.y - ctx.ceiling(x)) * (0.8 + 0.2 * noise(i * 0.12, ch + 33)))
   let scale = 1
   heights.forEach((hy, i) => {
     if (hy > 0 && allowed[i] < hy) scale = Math.min(scale, Math.max(0, allowed[i]) / hy)
   })
   scale = Math.max(0.5, scale)
   const profile: Pt[] = heights.map((hy, i) => {
-    heights[i] = Math.max(0, Math.min(hy * scale, allowed[i]))
+    heights[i] = softLimit(hy * scale, allowed[i])
     return [xs[i], o.y - heights[i]]
   })
-  if (Math.max(...heights) < 2) return ''
-  const body = pathFromPoints(profile, true)
+  const top = Math.max(...heights)
+  // Squashed to a sliver by the space: it would only read as a stray line, so leave it out.
+  if (top < Math.max(2, o.h * 0.2)) return ''
+  const bodyPath = pathFromPoints(profile, true)
 
-  if (o.washOnly) return `<path d="${body}" fill="url(#${ids.mist})"/>`
+  if (o.washOnly) return fadeIn(ctx, `<path d="${bodyPath}" fill="url(#${ids.mist})"/>`, 0.25, 1.2)
 
-  const out: string[] = []
   // Opaque paper fill hides whatever is behind, then a misty wash fading toward the base.
-  out.push(`<path d="${body}" fill="${palette.paper}"/>`)
-  out.push(`<path d="${body}" fill="url(#${ids.mist})"/>`)
-
+  const body = `<path d="${bodyPath}" fill="${palette.paper}"/><path d="${bodyPath}" fill="url(#${ids.mist})"/>`
+  const texture: string[] = []
+  const details: string[] = []
   const strokeW = 1 + o.h * 0.006
 
   // Contour texture: inner ridge lines broken into fragments.
@@ -74,7 +78,7 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
     let seg: Pt[] = []
     const flush = () => {
       if (seg.length >= 3 && rng.chance(0.55 + o.detail * 0.3 - sc * 0.3)) {
-        out.push(fillPath(brush(seg, { width: strokeW * 0.8, noise, channel: ch + r }), palette.ink, rng.range(0.3, 0.6)))
+        texture.push(fillPath(brush(seg, { width: strokeW * 0.8, noise, channel: ch + r }), palette.ink, rng.range(0.3, 0.6)))
       }
       seg = []
     }
@@ -86,7 +90,7 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
   }
 
   // Axe-cut strokes (斧劈皴): short strokes falling from the ridge, slanting outward.
-  const peakX = profile[heights.indexOf(Math.max(...heights))][0]
+  const peakX = profile[heights.indexOf(top)][0]
   const cuts = Math.round(rel * 133 * (0.4 + o.detail))
   for (let c = 0; c < cuts; c++) {
     const i = rng.int(2, n - 2)
@@ -99,11 +103,10 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
       const t = j / 5
       pts.push([x + dir * len * 0.3 * t + (noise(t * 3, ch + c) - 0.5) * 4, y + 3 + len * t])
     }
-    out.push(fillPath(brush(pts, { width: strokeW * 1.1, noise, channel: ch + c * 3 }), palette.ink, rng.range(0.2, 0.5)))
+    texture.push(fillPath(brush(pts, { width: strokeW * 1.1, noise, channel: ch + c * 3 }), palette.ink, rng.range(0.2, 0.5)))
   }
 
-  // Ridge outline.
-  out.push(fillPath(brush(profile, { width: strokeW * 1.8, noise, channel: ch + 99, taper: 0.3, jitter: 0.8 }), palette.ink))
+  const ridge = fillPath(brush(profile, { width: strokeW * 1.8, noise, channel: ch + 99, taper: 0.3, jitter: 0.8 }), palette.ink)
 
   // Moss dots (点苔) along the ridge.
   for (let i = 1; i < n; i++) {
@@ -111,7 +114,7 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
     const [x, y] = profile[i]
     const dots = rng.int(2, 5)
     for (let k = 0; k < dots; k++) {
-      out.push(circle(x + rng.range(-6, 6), y + rng.range(-2, 5), rng.range(0.8, 2.2), palette.ink, rng.range(0.6, 1)))
+      details.push(circle(x + rng.range(-6, 6), y + rng.range(-2, 5), rng.range(0.8, 2.2), palette.ink, rng.range(0.6, 1)))
     }
   }
 
@@ -120,9 +123,23 @@ export function mountain(ctx: Ctx, o: MountainOptions): string {
     for (let i = 2; i < n - 2; i++) {
       if (heights[i] < o.h * 0.15 || !rng.chance(0.07)) continue
       const [x, y] = profile[i]
-      out.push(tree(ctx, x, y + 2, o.h * rng.range(0.07, 0.15)))
+      details.push(tree(ctx, x, y + 2, o.h * rng.range(0.07, 0.15)))
     }
   }
 
-  return `<g>${out.join('')}</g>`
+  // Painting order: wash the body, draw the ridge line, texture it, then add details.
+  // Slots are reserved in that order; the DOM order below keeps the ridge on top.
+  const aBody = fadeIn(ctx, body, 0.25, 1)
+  const aRidge = wipe(ctx, ridge, xs[0] - 4, xs[n] + 4, o.y - top - strokeW * 3, o.y + 4, 0.9, 1.6)
+  const aTexture = fadeIn(ctx, texture.join(''), 0.6, 1.4)
+  const aDetails = fadeIn(ctx, details.join(''), 0.4, 0.9)
+  return `<g>${aBody}${aTexture}${aRidge}${aDetails}</g>`
+}
+
+/** min(h, a) with a smooth knee instead of a hard corner. */
+function softLimit(h: number, a: number): number {
+  if (a === Infinity) return h
+  if (a <= 0) return 0
+  const k = a * 0.75
+  return h <= k ? h : k + (a - k) * Math.tanh((h - k) / (a - k))
 }

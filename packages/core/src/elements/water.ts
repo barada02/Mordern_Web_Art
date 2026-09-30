@@ -1,3 +1,4 @@
+import { drift, fadeIn } from '../anim'
 import { brush, type Pt } from '../stroke'
 import type { Ctx } from '../types'
 import { fillPath } from './svg'
@@ -26,7 +27,8 @@ export function water(ctx: Ctx, y0: number, y1: number, width: number): string {
       out.push(fillPath(brush(pts, { width: 0.7 + t * 0.9, noise, channel: ch }), palette.ink, rng.range(0.15, 0.35)))
     }
   }
-  return `<g>${out.join('')}</g>`
+  const shimmer = ctx.motion ? `<animate attributeName="opacity" values="1;0.6;1" dur="7s" repeatCount="indefinite"/>` : ''
+  return fadeIn(ctx, `<g>${shimmer}${out.join('')}</g>`, 0.5, 1.5)
 }
 
 /** A small fishing boat with a figure, centred at (x, y) on the water line. */
@@ -56,5 +58,11 @@ export function boat(ctx: Ctx, x: number, y: number, s: number): string {
     const half = s * (0.45 - k * 0.1)
     out.push(fillPath(brush([[x - half, ry], [x, ry + 1], [x + half, ry]], { width: 0.9, noise, channel: ch + 5 + k }), palette.ink, 0.25))
   }
-  return `<g>${out.join('')}</g>`
+
+  // Drawn from the rng even without motion, so turning motion on never changes the painting.
+  const travel = s * rng.range(1, 2) * dir
+  const travelDur = rng.range(30, 50)
+  const bobDur = rng.range(3, 5)
+  const moving = `<g>${drift(ctx, travel, 0, travelDur)}<g>${drift(ctx, 0, s * 0.03, bobDur)}${out.join('')}</g></g>`
+  return fadeIn(ctx, moving, 0.4, 1)
 }

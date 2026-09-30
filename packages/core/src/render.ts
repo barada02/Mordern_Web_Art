@@ -1,3 +1,4 @@
+import { resolveAnimate, Timeline } from './anim'
 import { compose, resolveDistance } from './compose'
 import { createNoise } from './noise'
 import { resolvePalette } from './palettes'
@@ -25,12 +26,17 @@ export function renderSVG(options: LandscapeOptions = {}): string {
   const rng = new Rng(seed)
   const palette = resolvePalette(options.palette)
   const space = resolveSpace(options.space)
+  const anim = resolveAnimate(options.animate)
   const uid = `ss${hashSeed(seed).toString(36)}${(instanceCount++).toString(36)}`
+  let idCount = 0
   const ctx: Ctx = {
     rng,
     noise: createNoise(rng),
     palette,
-    ids: { mist: `${uid}m`, grain: `${uid}g`, space: `${uid}s` },
+    ids: { mist: `${uid}m`, grain: `${uid}g`, space: `${uid}s`, fog: `${uid}f` },
+    uid: () => `${uid}c${(idCount++).toString(36)}`,
+    tl: anim.reveal ? new Timeline() : null,
+    motion: anim.motion,
     W,
     H,
     span: Math.max(W, H * 1.6),
@@ -63,6 +69,11 @@ export function renderSVG(options: LandscapeOptions = {}): string {
     `<stop offset="0.55" stop-color="${palette.wash}" stop-opacity="0.1"/>` +
     `<stop offset="1" stop-color="${palette.wash}" stop-opacity="0"/>` +
     `</linearGradient>` +
+    `<radialGradient id="${ctx.ids.fog}">` +
+    `<stop offset="0" stop-color="${palette.paper}" stop-opacity="0.9"/>` +
+    `<stop offset="0.5" stop-color="${palette.paper}" stop-opacity="0.5"/>` +
+    `<stop offset="1" stop-color="${palette.paper}" stop-opacity="0"/>` +
+    `</radialGradient>` +
     (space
       ? `<radialGradient id="${ctx.ids.space}">` +
         `<stop offset="0" stop-color="${palette.paper}" stop-opacity="0.85"/>` +
@@ -81,7 +92,7 @@ export function renderSVG(options: LandscapeOptions = {}): string {
 
   const grain = showGrain ? `<rect width="${W}" height="${H}" filter="url(#${ctx.ids.grain})"/>` : ''
 
-  return (
+  const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" height="100%" ` +
     `preserveAspectRatio="xMidYMid slice" role="img" aria-label="${label.replace(/"/g, '&quot;')}" ` +
     `data-distance="${distance}">` +
@@ -91,5 +102,5 @@ export function renderSVG(options: LandscapeOptions = {}): string {
     veil +
     grain +
     `</svg>`
-  )
+  return ctx.tl ? ctx.tl.resolve(svg, anim.duration) : svg
 }

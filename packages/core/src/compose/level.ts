@@ -1,3 +1,4 @@
+import { mistBand } from '../elements/mist'
 import { mountain } from '../elements/mountain'
 import { boat, water } from '../elements/water'
 import type { Ctx } from '../types'
@@ -10,6 +11,7 @@ export function level(ctx: Ctx, s: Scene): string[] {
   const hz = rng.range(0.5, 0.58)
 
   out.push(group(0.4, farWashes(ctx, Math.round(4 + s.D * 4), [hz - 0.01, hz + 0.02], [0.08, 0.2], [0.2, 0.5])))
+  out.push(mistBand(ctx, hz * H, H * 0.04))
   out.push(group(0.6, farWashes(ctx, rng.int(2, 3), [hz + 0.02, hz + 0.04], [0.05, 0.12], [0.15, 0.3])))
 
   let mid = ''
@@ -25,6 +27,7 @@ export function level(ctx: Ctx, s: Scene): string[] {
     })
   }
   out.push(group(0.75, mid))
+  out.push(mistBand(ctx, (hz + 0.07) * H, H * 0.03, 0.6))
 
   if (s.water) {
     out.push(water(ctx, (hz + 0.07) * H, H, W))
