@@ -1,28 +1,48 @@
 {
   "name": "shanshui",
-  "version": "0.0.1",
-  "description": "Procedurally generated Chinese ink landscapes (山水) for the web. Seeded, dependency-free SVG.",
+  "version": "0.1.0",
+  "description": "Procedurally generated Chinese ink landscapes (山水) for the web. Seeded, animated, dependency-free SVG, as a JS API or a <shan-shui> web component.",
   "type": "module",
-  "main": "./dist/shanshui.umd.cjs",
+  "main": "./dist/shanshui.cjs",
   "module": "./dist/shanshui.js",
   "types": "./dist/index.d.ts",
-  "unpkg": "./dist/shanshui.umd.cjs",
-  "jsdelivr": "./dist/shanshui.umd.cjs",
+  "unpkg": "./dist/shanshui.iife.js",
+  "jsdelivr": "./dist/shanshui.iife.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/shanshui.js",
-      "require": "./dist/shanshui.umd.cjs"
-    }
+      "require": "./dist/shanshui.cjs"
+    },
+    "./element": {
+      "types": "./dist/element.d.ts",
+      "import": "./dist/element.js",
+      "require": "./dist/element.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/element.js",
+    "./dist/element.cjs",
+    "./dist/shanshui.iife.js"
+  ],
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build",
-    "typecheck": "tsc --noEmit"
+    "build": "vite build && vite build -c vite.cdn.config.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barada02/Mordern_Web_Art.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/barada02/Mordern_Web_Art/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/barada02/Mordern_Web_Art/issues"
   },
   "keywords": [
     "shanshui",
@@ -31,7 +51,10 @@
     "landscape",
     "ink",
     "svg",
-    "chinese-painting"
+    "chinese-painting",
+    "web-component",
+    "hero",
+    "background"
   ],
   "license": "MIT",
   "devDependencies": {
