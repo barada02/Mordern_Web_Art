@@ -17,6 +17,7 @@ export function water(ctx: Ctx, y0: number, y1: number, width: number): string {
       const x = rng.range(-0.05, 1) * width
       const len = width * rng.range(0.02, 0.1) * (1 + t)
       const ch = rng.range(0, 1000)
+      if (ctx.inSpace(x + len / 2, y) && rng.chance(0.85)) continue
       const pts: Pt[] = []
       for (let j = 0; j <= 6; j++) {
         const u = j / 6
