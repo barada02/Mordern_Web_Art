@@ -12,7 +12,13 @@
     </header>
 
     <main>
-      <div id="stage" class="stage" aria-live="polite"></div>
+      <div class="stage-wrap">
+        <div id="stage" class="stage" aria-live="polite"></div>
+        <div id="headline" class="headline" hidden>
+          <h2>Mountains &amp; Water</h2>
+          <p>Your content lives in the painting's empty space.</p>
+        </div>
+      </div>
 
       <form id="controls" class="controls" autocomplete="off">
         <label class="field seed">
@@ -29,6 +35,38 @@
         </label>
 
         <label class="field">
+          <span>Distance</span>
+          <select id="distance" name="distance">
+            <option value="auto">auto (by seed)</option>
+            <option value="level">平远 level</option>
+            <option value="high">高远 high</option>
+            <option value="deep">深远 deep</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Space for text</span>
+          <select id="space" name="space">
+            <option value="none">none</option>
+            <option value="left">left</option>
+            <option value="right">right</option>
+            <option value="center">center</option>
+            <option value="top">top</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Aspect</span>
+          <select id="aspect" name="aspect">
+            <option value="16 / 6">16:6 banner</option>
+            <option value="16 / 9">16:9</option>
+            <option value="4 / 3">4:3</option>
+            <option value="1 / 1">1:1</option>
+            <option value="9 / 16">9:16 phone</option>
+          </select>
+        </label>
+
+        <label class="field">
           <span>Density <output id="densityOut"></output></span>
           <input id="density" name="density" type="range" min="0" max="1" step="0.05" value="0.6" />
         </label>
@@ -37,6 +75,7 @@
           <label><input id="trees" type="checkbox" checked /> Trees</label>
           <label><input id="water" type="checkbox" checked /> Water</label>
           <label><input id="grain" type="checkbox" checked /> Grain</label>
+          <label><input id="showText" type="checkbox" checked /> Sample text</label>
         </fieldset>
 
         <div class="actions">

@@ -1,45 +1,96 @@
-import { createLandscape, palettes, randomSeed, type LandscapeOptions, type PaletteName } from 'shanshui'
+import {
+  createLandscape,
+  palettes,
+  randomSeed,
+  resolveSpace,
+  type Distance,
+  type LandscapeOptions,
+  type PaletteName,
+  type SpacePreset,
+} from 'shanshui'
 import './style.css'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 
 const seedInput = $<HTMLInputElement>('seed')
 const paletteSelect = $<HTMLSelectElement>('palette')
+const distanceSelect = $<HTMLSelectElement>('distance')
+const spaceSelect = $<HTMLSelectElement>('space')
+const aspectSelect = $<HTMLSelectElement>('aspect')
 const density = $<HTMLInputElement>('density')
 const densityOut = $<HTMLOutputElement>('densityOut')
 const trees = $<HTMLInputElement>('trees')
 const water = $<HTMLInputElement>('water')
 const grain = $<HTMLInputElement>('grain')
+const showText = $<HTMLInputElement>('showText')
+const wrap = document.querySelector<HTMLElement>('.stage-wrap')!
+const headline = $<HTMLElement>('headline')
 const code = $<HTMLElement>('code')
 
 for (const name of Object.keys(palettes)) paletteSelect.add(new Option(name, name))
 
 // Seed from the URL hash so paintings are shareable.
-const initialSeed = decodeURIComponent(location.hash.slice(1)) || randomSeed()
-seedInput.value = initialSeed
+seedInput.value = decodeURIComponent(location.hash.slice(1)) || randomSeed()
+
+const DEFAULTS: LandscapeOptions = { palette: 'sumi', distance: 'auto', space: 'none', density: 0.6, trees: true, water: true, grain: true }
 
 const read = (): LandscapeOptions => ({
   seed: seedInput.value || '0',
   palette: paletteSelect.value as PaletteName,
+  distance: distanceSelect.value as Distance | 'auto',
+  space: spaceSelect.value as SpacePreset,
   density: Number(density.value),
   trees: trees.checked,
   water: water.checked,
   grain: grain.checked,
 })
 
+function applyAspect() {
+  const [w, h] = aspectSelect.value.split('/').map(Number)
+  wrap.style.aspectRatio = aspectSelect.value
+  // Keep tall aspects within the viewport.
+  wrap.style.width = `min(100%, calc(70vh * ${w / h}))`
+}
+
+function placeHeadline(opts: LandscapeOptions) {
+  const box = resolveSpace(opts.space as SpacePreset)
+  headline.hidden = !box || !showText.checked
+  if (!box) return
+  Object.assign(headline.style, {
+    left: `${box.x * 100}%`,
+    top: `${box.y * 100}%`,
+    width: `${box.width * 100}%`,
+    height: `${box.height * 100}%`,
+    color: palettes[opts.palette as PaletteName].ink,
+  })
+}
+
+function snippet(opts: LandscapeOptions) {
+  // Show only what differs from the defaults, like a user would write it.
+  const shown: Record<string, unknown> = { seed: opts.seed }
+  for (const [k, v] of Object.entries(opts)) {
+    if (k !== 'seed' && DEFAULTS[k as keyof LandscapeOptions] !== v) shown[k] = v
+  }
+  return `import { createLandscape } from 'shanshui'\n\ncreateLandscape('#hero', ${JSON.stringify(shown, null, 2)})`
+}
+
+applyAspect()
 const landscape = createLandscape('#stage', read())
 
 function render() {
   const opts = read()
   densityOut.value = opts.density!.toFixed(2)
   landscape.update(opts)
+  placeHeadline(opts)
   history.replaceState(null, '', `#${encodeURIComponent(String(opts.seed))}`)
-  code.textContent =
-    `import { createLandscape } from 'shanshui'\n\n` +
-    `createLandscape('#hero', ${JSON.stringify(opts, null, 2)})`
+  code.textContent = snippet(opts)
 }
 
-$('controls').addEventListener('input', render)
+$('controls').addEventListener('input', (e) => {
+  // Aspect changes resize the element; the library redraws itself via ResizeObserver.
+  if (e.target === aspectSelect) applyAspect()
+  render()
+})
 $('shuffle').addEventListener('click', () => {
   seedInput.value = randomSeed()
   render()
