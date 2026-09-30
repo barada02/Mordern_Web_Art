@@ -54,6 +54,24 @@ createLandscape('#hero', { space: { x: 0.1, y: 0.1, width: 0.5, height: 0.4 } })
 
 The drawing matches the element's aspect ratio and redraws on resize, so size the element with CSS.
 
+### Animation
+
+The painting can paint itself in, back to front, like a brush at work: distant washes fade in, ridge lines sweep across, then texture, water, the boat and the trees. After that, mist drifts, water shimmers and the boat bobs.
+
+```js
+const art = createLandscape('#hero', { seed: 'home', animate: true })
+createLandscape('#hero', { animate: { duration: 4, motion: false } }) // reveal only
+createLandscape('#hero', { animate: { reveal: false } })             // ambient motion only
+
+art.replay()   // paint it in again
+art.pause()
+art.play()
+```
+
+- Off by default. Animation never changes the painting itself: same seed, same picture.
+- Turned off automatically for users with `prefers-reduced-motion`, and paused while off-screen.
+- Uses native SVG animation, so a downloaded `.svg` animates too. Tools that can't animate show the finished painting.
+
 ### Server / build time
 
 ```js
