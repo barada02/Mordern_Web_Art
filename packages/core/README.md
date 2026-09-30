@@ -3,6 +3,8 @@
 Procedurally generated Chinese ink landscapes for your website: hero backgrounds, headers, covers and cards.
 Seeded, animated, dependency-free SVG, about 8 KB gzipped.
 
+![shanshui: a hero with space for text, and the three compositions](https://raw.githubusercontent.com/barada02/Mordern_Web_Art/main/docs/preview.png)
+
 - **Same seed, same painting.** Use a page slug or a title as the seed and every page gets its own painting, which never changes.
 - **Leaves room for your content (留白).** Tell it where your headline goes and the mountains make space.
 - **Composed, not random.** Three layouts after Guo Xi's classical *three distances* (三远).
