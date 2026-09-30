@@ -1,0 +1,100 @@
+.demos { gap: 40px; }
+
+.demo { display: grid; gap: 12px; }
+
+.demo-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+shan-shui {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+/* Hero */
+.hero { aspect-ratio: 16 / 7; min-height: 280px; }
+
+.hero-copy {
+  color: #1d1b18;
+  text-align: center;
+  padding: 0 12px;
+}
+
+.hero-copy h3 {
+  margin: 0;
+  font-family: 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  font-size: clamp(1.3rem, 3.4vw, 2.6rem);
+  font-weight: 600;
+}
+
+.hero-copy p {
+  margin: 0.5em 0 1em;
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  opacity: 0.75;
+}
+
+.cta {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #8b2e1f;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* Brand colours */
+.brand {
+  --shanshui-ink: #0f3b2c;
+  --shanshui-paper: #f2f0e6;
+  --shanshui-wash: #2f7d5b;
+  aspect-ratio: 16 / 7;
+}
+
+.brand-title {
+  margin: 0;
+  color: #0f3b2c;
+  font-family: Georgia, serif;
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  letter-spacing: 0.02em;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card shan-shui {
+  aspect-ratio: 4 / 3;
+  border: 0;
+  border-radius: 0;
+}
+
+.card h3 {
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Night */
+.night { aspect-ratio: 16 / 7; }
+
+.night-title {
+  margin: 0;
+  color: #e6dfcf;
+  font-family: 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  font-weight: 500;
+}
