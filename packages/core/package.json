@@ -1,0 +1,42 @@
+{
+  "name": "shanshui",
+  "version": "0.0.1",
+  "description": "Procedurally generated Chinese ink landscapes (山水) for the web. Seeded, dependency-free SVG.",
+  "type": "module",
+  "main": "./dist/shanshui.umd.cjs",
+  "module": "./dist/shanshui.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/shanshui.umd.cjs",
+  "jsdelivr": "./dist/shanshui.umd.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/shanshui.js",
+      "require": "./dist/shanshui.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "shanshui",
+    "generative-art",
+    "procedural",
+    "landscape",
+    "ink",
+    "svg",
+    "chinese-painting"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript/typescript6": "^6.0.2",
+    "vite": "^8.3.1",
+    "vite-plugin-dts": "^5.1.1"
+  }
+}

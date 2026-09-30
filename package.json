@@ -1,0 +1,19 @@
+{
+  "name": "shanshui-monorepo",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "predev": "npm run build -w shanshui",
+    "dev": "concurrently -k -n core,app -c cyan,magenta \"npm run dev -w shanshui\" \"npm run dev -w playground\"",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "typescript": "^7.0.2"
+  }
+}

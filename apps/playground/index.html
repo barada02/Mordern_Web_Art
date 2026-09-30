@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shanshui playground</title>
+  </head>
+  <body>
+    <header class="top">
+      <h1>shanshui <span class="zh">山水</span></h1>
+      <p class="sub">Seeded ink landscapes for the web</p>
+    </header>
+
+    <main>
+      <div id="stage" class="stage" aria-live="polite"></div>
+
+      <form id="controls" class="controls" autocomplete="off">
+        <label class="field seed">
+          <span>Seed</span>
+          <div class="row">
+            <input id="seed" name="seed" type="text" spellcheck="false" />
+            <button type="button" id="shuffle" title="Random seed">Shuffle</button>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Palette</span>
+          <select id="palette" name="palette"></select>
+        </label>
+
+        <label class="field">
+          <span>Density <output id="densityOut"></output></span>
+          <input id="density" name="density" type="range" min="0" max="1" step="0.05" value="0.6" />
+        </label>
+
+        <fieldset class="field toggles">
+          <label><input id="trees" type="checkbox" checked /> Trees</label>
+          <label><input id="water" type="checkbox" checked /> Water</label>
+          <label><input id="grain" type="checkbox" checked /> Grain</label>
+        </fieldset>
+
+        <div class="actions">
+          <button type="button" id="download">Download SVG</button>
+          <button type="button" id="copy">Copy code</button>
+        </div>
+      </form>
+
+      <pre class="code"><code id="code"></code></pre>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
