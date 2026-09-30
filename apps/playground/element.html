@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shanshui web component</title>
+  </head>
+  <body>
+    <header class="top">
+      <h1>shanshui <span class="zh">山水</span></h1>
+      <nav class="nav">
+        <a href="./">Playground</a>
+        <a href="./element.html" aria-current="page">Web component</a>
+      </nav>
+    </header>
+
+    <main class="demos">
+      <section class="demo">
+        <h2 class="demo-title">Hero with content in the empty space</h2>
+        <shan-shui class="hero" seed="welcome" distance="level" space="left" animate>
+          <div class="hero-copy">
+            <h3>Quiet software for busy people</h3>
+            <p>Slotted content is placed in the painting's empty space automatically.</p>
+            <a class="cta" href="#">Get started</a>
+          </div>
+        </shan-shui>
+        <pre class="code"><code>&lt;script type="module"&gt;import 'shanshui/element'&lt;/script&gt;
+
+&lt;shan-shui seed="welcome" distance="level" space="left" animate&gt;
+  &lt;h1&gt;Quiet software for busy people&lt;/h1&gt;
+  &lt;a href="/start"&gt;Get started&lt;/a&gt;
+&lt;/shan-shui&gt;</code></pre>
+      </section>
+
+      <section class="demo">
+        <h2 class="demo-title">Brand colours from CSS</h2>
+        <shan-shui class="brand" seed="forest-co" distance="deep" space="top" animate>
+          <h3 class="brand-title">Forest &amp; Co.</h3>
+        </shan-shui>
+        <pre class="code"><code>shan-shui.brand {
+  --shanshui-ink: #0f3b2c;
+  --shanshui-paper: #f2f0e6;
+  --shanshui-wash: #2f7d5b;
+}</code></pre>
+      </section>
+
+      <section class="demo">
+        <h2 class="demo-title">A unique cover for every post (seed = slug)</h2>
+        <div class="cards">
+          <article class="card">
+            <shan-shui seed="notes-on-slowness" density="0.4" grain="false"></shan-shui>
+            <h3>Notes on slowness</h3>
+          </article>
+          <article class="card">
+            <shan-shui seed="a-year-of-letters" density="0.4" grain="false" palette="qinglu"></shan-shui>
+            <h3>A year of letters</h3>
+          </article>
+          <article class="card">
+            <shan-shui seed="rivers-and-routers" density="0.4" grain="false" palette="mist"></shan-shui>
+            <h3>Rivers and routers</h3>
+          </article>
+        </div>
+        <pre class="code"><code>&lt;shan-shui seed="{{ post.slug }}" density="0.4" grain="false"&gt;&lt;/shan-shui&gt;</code></pre>
+      </section>
+
+      <section class="demo">
+        <h2 class="demo-title">Driven by attributes</h2>
+        <shan-shui id="live" class="night" seed="moon" palette="night" distance="high" space="center" animate>
+          <h3 class="night-title">月下 · beneath the moon</h3>
+        </shan-shui>
+        <div class="actions">
+          <button type="button" id="next">New seed</button>
+          <button type="button" id="cycle">Next distance</button>
+          <button type="button" id="replay">Replay</button>
+        </div>
+        <pre class="code"><code>el.setAttribute('seed', 'another')   // redraws
+el.replay()                          // paints it in again</code></pre>
+      </section>
+    </main>
+
+    <script type="module" src="/src/element.ts"></script>
+  </body>
+</html>
