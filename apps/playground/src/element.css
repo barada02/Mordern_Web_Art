@@ -8,7 +8,7 @@
   font-weight: 600;
 }
 
-shan-shui {
+kalpa-shan {
   border-radius: 10px;
   border: 1px solid var(--line);
 }
@@ -47,9 +47,9 @@ shan-shui {
 
 /* Brand colours */
 .brand {
-  --shanshui-ink: #0f3b2c;
-  --shanshui-paper: #f2f0e6;
-  --shanshui-wash: #2f7d5b;
+  --kalpa-ink: #0f3b2c;
+  --kalpa-paper: #f2f0e6;
+  --kalpa-wash: #2f7d5b;
   aspect-ratio: 16 / 7;
 }
 
@@ -75,7 +75,7 @@ shan-shui {
   overflow: hidden;
 }
 
-.card shan-shui {
+.card kalpa-shan {
   aspect-ratio: 4 / 3;
   border: 0;
   border-radius: 0;

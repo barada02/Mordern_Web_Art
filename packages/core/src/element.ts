@@ -4,12 +4,12 @@ import { resolveSpace } from './space'
 import type { AnimateOptions, LandscapeOptions, Palette, PaletteName, SpaceBox, SpacePreset } from './types'
 
 /*
- * <shan-shui seed="home" distance="high" space="left" animate>
+ * <kalpa-shan seed="home" distance="high" space="left" animate>
  *   <h1>Content placed in the empty space</h1>
- * </shan-shui>
+ * </kalpa-shan>
  *
  * Attributes mirror LandscapeOptions. Brand colours can come from CSS:
- *   shan-shui { --shanshui-ink: #123; --shanshui-paper: #fff; --shanshui-wash: #456 }
+ *   kalpa-shan { --kalpa-ink: #123; --kalpa-paper: #fff; --kalpa-wash: #456 }
  */
 
 const ATTRIBUTES = [
@@ -54,7 +54,7 @@ function parseSpace(value: string | null): SpacePreset | SpaceBox | undefined {
   return value as SpacePreset
 }
 
-export class ShanShuiElement extends Base {
+export class KalpaShanElement extends Base {
   static observedAttributes = [...ATTRIBUTES]
 
   private art: HTMLDivElement | null = null
@@ -140,15 +140,15 @@ export class ShanShuiElement extends Base {
     return opts
   }
 
-  /** A named palette, overridden per colour by --shanshui-* custom properties. */
+  /** A named palette, overridden per colour by --kalpa-* custom properties. */
   private readPalette(): PaletteName | Palette {
     const name = (this.getAttribute('palette') as PaletteName) || 'sumi'
     const base = palettes[name] ?? palettes.sumi
     const css = getComputedStyle(this)
     const read = (prop: string) => css.getPropertyValue(prop).trim()
-    const ink = read('--shanshui-ink')
-    const paper = read('--shanshui-paper')
-    const wash = read('--shanshui-wash')
+    const ink = read('--kalpa-ink')
+    const paper = read('--kalpa-paper')
+    const wash = read('--kalpa-wash')
     if (!ink && !paper && !wash) return name
     return { ink: ink || base.ink, paper: paper || base.paper, wash: wash || base.wash }
   }
@@ -172,15 +172,15 @@ export class ShanShuiElement extends Base {
 }
 
 /** Register the element (done automatically on import). Safe to call more than once. */
-export function defineShanShui(tag = 'shan-shui'): void {
+export function defineKalpaShan(tag = 'kalpa-shan'): void {
   if (typeof customElements === 'undefined' || customElements.get(tag)) return
-  customElements.define(tag, class extends ShanShuiElement {})
+  customElements.define(tag, class extends KalpaShanElement {})
 }
 
-defineShanShui()
+defineKalpaShan()
 
 declare global {
   interface HTMLElementTagNameMap {
-    'shan-shui': ShanShuiElement
+    'kalpa-shan': KalpaShanElement
   }
 }

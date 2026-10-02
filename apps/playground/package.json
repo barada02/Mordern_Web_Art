@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "shanshui": "*"
+    "kalpa-shan": "*"
   },
   "devDependencies": {
     "vite": "^8.3.1"

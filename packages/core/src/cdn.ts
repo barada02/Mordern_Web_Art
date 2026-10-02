@@ -1,4 +1,4 @@
-// Entry for the CDN build (dist/shanshui.iife.js): the full API as `window.Shanshui`,
-// and <shan-shui> registered — all from one <script> tag.
+// Entry for the CDN build (dist/kalpa-shan.iife.js): the full API as `window.KalpaShan`,
+// and <kalpa-shan> registered — all from one <script> tag.
 export * from './index'
-export { defineShanShui, ShanShuiElement } from './element'
+export { defineKalpaShan, KalpaShanElement } from './element'

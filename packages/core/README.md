@@ -1,40 +1,40 @@
-# shanshui 山水
+# Kalpa Shan
 
-Procedurally generated Chinese ink landscapes for your website: hero backgrounds, headers, covers and cards.
+Procedurally generated Chinese ink landscapes (山水, *shan shui*) for your website: hero backgrounds, headers, covers and cards.
 Seeded, animated, dependency-free SVG, about 8 KB gzipped.
 
-![shanshui: a hero with space for text, and the three compositions](https://raw.githubusercontent.com/barada02/Mordern_Web_Art/main/docs/preview.png)
+![Kalpa Shan: a hero with space for text, and the three compositions](https://raw.githubusercontent.com/barada02/kalpa-shan/main/docs/preview.png)
 
 - **Same seed, same painting.** Use a page slug or a title as the seed and every page gets its own painting, which never changes.
 - **Leaves room for your content (留白).** Tell it where your headline goes and the mountains make space.
 - **Composed, not random.** Three layouts after Guo Xi's classical *three distances* (三远).
 - **Paints itself in.** An optional brush reveal plus drifting mist, respecting `prefers-reduced-motion`.
-- **Works anywhere:** a `<shan-shui>` web component, a JS API, a CDN script, or server-side SVG strings.
+- **Works anywhere:** a `<kalpa-shan>` web component, a JS API, a CDN script, or server-side SVG strings.
 
 ## Install
 
 ```sh
-npm install shanshui
+npm install kalpa-shan
 ```
 
 Or use it straight from a CDN, with no build step:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/shanshui@0.1/dist/shanshui.iife.js"></script>
-<shan-shui seed="hello" animate></shan-shui>
+<script src="https://cdn.jsdelivr.net/npm/kalpa-shan@0.1/dist/kalpa-shan.iife.js"></script>
+<kalpa-shan seed="hello" animate></kalpa-shan>
 ```
 
 ## Web component
 
 ```js
-import 'shanshui/element'
+import 'kalpa-shan/element'
 ```
 
 ```html
-<shan-shui seed="welcome" distance="level" space="left" animate style="aspect-ratio: 16 / 7">
+<kalpa-shan seed="welcome" distance="level" space="left" animate style="aspect-ratio: 16 / 7">
   <h1>Quiet software for busy people</h1>
   <a href="/start">Get started</a>
-</shan-shui>
+</kalpa-shan>
 ```
 
 Content inside the element is placed in the empty space automatically. Size the element with CSS (the default is `aspect-ratio: 16 / 6`, full width).
@@ -56,17 +56,17 @@ Changing an attribute redraws. Methods: `replay()`, `pause()`, `play()`, `toSVG(
 **Brand colours** come from CSS custom properties. Each one overrides a single colour of the chosen palette:
 
 ```css
-shan-shui {
-  --shanshui-ink: #0f3b2c;
-  --shanshui-paper: #f2f0e6;
-  --shanshui-wash: #2f7d5b;
+kalpa-shan {
+  --kalpa-ink: #0f3b2c;
+  --kalpa-paper: #f2f0e6;
+  --kalpa-wash: #2f7d5b;
 }
 ```
 
 ## JavaScript API
 
 ```js
-import { createLandscape } from 'shanshui'
+import { createLandscape } from 'kalpa-shan'
 
 const art = createLandscape('#hero', { seed: 'my-post', distance: 'high', space: 'left', animate: true })
 
@@ -132,10 +132,14 @@ createLandscape('#hero', { animate: { reveal: false } })             // ambient 
 `renderSVG` needs no DOM, so it works in Node, at build time, or in a server component:
 
 ```js
-import { renderSVG } from 'shanshui'
+import { renderSVG } from 'kalpa-shan'
 
 const svg = renderSVG({ seed: post.slug, width: 1200, height: 630 }) // e.g. an Open Graph image
 ```
+
+## The name
+
+**Kalpa** (कल्प) is Sanskrit for "creation" and for an aeon. **Shan** (山) is Chinese for mountain. Asked how long a kalpa is, the Buddha answered that a mountain of rock, stroked with a silk cloth once every hundred years, would wear away sooner. [More in the repo README](https://github.com/barada02/kalpa-shan#about-the-name).
 
 ## Credits
 

@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite'
 
-// CDN bundle: one self-contained, minified script exposing `window.Shanshui`
-// and registering <shan-shui>.
+// CDN bundle: one self-contained, minified script exposing `window.KalpaShan`
+// and registering <kalpa-shan>.
 export default defineConfig({
   build: {
     lib: {
       entry: 'src/cdn.ts',
-      name: 'Shanshui',
+      name: 'KalpaShan',
       formats: ['iife'],
-      fileName: () => 'shanshui.iife.js',
+      fileName: () => 'kalpa-shan.iife.js',
     },
     emptyOutDir: false,
     sourcemap: true,
