@@ -1,5 +1,5 @@
 # Kalpa Shan
-
+## Smoke
 **Procedurally generated Chinese ink landscapes (山水, *shan shui*) for your website.**
 Hero backgrounds, headers and post covers, each one a unique painting from a seed.
 
