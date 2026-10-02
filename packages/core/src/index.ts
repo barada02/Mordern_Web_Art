@@ -36,7 +36,7 @@ const BASE_HEIGHT = 600
  */
 export function createLandscape(target: Element | string, options: LandscapeOptions = {}): Landscape {
   const el = typeof target === 'string' ? document.querySelector(target) : target
-  if (!el) throw new Error(`shanshui: target "${String(target)}" not found`)
+  if (!el) throw new Error(`kalpa-shan: target "${String(target)}" not found`)
 
   let opts: LandscapeOptions = { ...options, seed: options.seed ?? randomSeed() }
   let svg = ''

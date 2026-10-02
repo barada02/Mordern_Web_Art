@@ -27,7 +27,7 @@ export function renderSVG(options: LandscapeOptions = {}): string {
   const palette = resolvePalette(options.palette)
   const space = resolveSpace(options.space)
   const anim = resolveAnimate(options.animate)
-  const uid = `ss${hashSeed(seed).toString(36)}${(instanceCount++).toString(36)}`
+  const uid = `ks${hashSeed(seed).toString(36)}${(instanceCount++).toString(36)}`
   let idCount = 0
   const ctx: Ctx = {
     rng,

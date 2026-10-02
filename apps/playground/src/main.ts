@@ -7,7 +7,7 @@ import {
   type LandscapeOptions,
   type PaletteName,
   type SpacePreset,
-} from 'shanshui'
+} from 'kalpa-shan'
 import './style.css'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -74,7 +74,7 @@ function snippet(opts: LandscapeOptions) {
   for (const [k, v] of Object.entries(opts)) {
     if (k !== 'seed' && DEFAULTS[k as keyof LandscapeOptions] !== v) shown[k] = v
   }
-  return `import { createLandscape } from 'shanshui'\n\ncreateLandscape('#hero', ${JSON.stringify(shown, null, 2)})`
+  return `import { createLandscape } from 'kalpa-shan'\n\ncreateLandscape('#hero', ${JSON.stringify(shown, null, 2)})`
 }
 
 applyAspect()
@@ -125,7 +125,7 @@ $('download').addEventListener('click', () => {
   const blob = new Blob([landscape.toSVG()], { type: 'image/svg+xml' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
-  a.download = `shanshui-${seedInput.value}.svg`
+  a.download = `kalpa-shan-${seedInput.value}.svg`
   a.click()
   URL.revokeObjectURL(a.href)
 })

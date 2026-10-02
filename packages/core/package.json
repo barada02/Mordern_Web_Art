@@ -1,18 +1,18 @@
 {
-  "name": "shanshui",
+  "name": "kalpa-shan",
   "version": "0.1.0",
-  "description": "Procedurally generated Chinese ink landscapes (山水) for the web. Seeded, animated, dependency-free SVG, as a JS API or a <shan-shui> web component.",
+  "description": "Procedurally generated Chinese ink landscapes (山水 shan shui) for the web. Seeded, animated, dependency-free SVG, as a JS API or a <kalpa-shan> web component.",
   "type": "module",
-  "main": "./dist/shanshui.cjs",
-  "module": "./dist/shanshui.js",
+  "main": "./dist/kalpa-shan.cjs",
+  "module": "./dist/kalpa-shan.js",
   "types": "./dist/index.d.ts",
-  "unpkg": "./dist/shanshui.iife.js",
-  "jsdelivr": "./dist/shanshui.iife.js",
+  "unpkg": "./dist/kalpa-shan.iife.js",
+  "jsdelivr": "./dist/kalpa-shan.iife.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/shanshui.js",
-      "require": "./dist/shanshui.cjs"
+      "import": "./dist/kalpa-shan.js",
+      "require": "./dist/kalpa-shan.cjs"
     },
     "./element": {
       "types": "./dist/element.d.ts",
@@ -27,7 +27,7 @@
   "sideEffects": [
     "./dist/element.js",
     "./dist/element.cjs",
-    "./dist/shanshui.iife.js"
+    "./dist/kalpa-shan.iife.js"
   ],
   "scripts": {
     "dev": "vite build --watch",
@@ -37,19 +37,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/barada02/Mordern_Web_Art.git",
+    "url": "git+https://github.com/barada02/kalpa-shan.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/barada02/Mordern_Web_Art/tree/main/packages/core#readme",
+  "homepage": "https://github.com/barada02/kalpa-shan/tree/main/packages/core#readme",
   "bugs": {
-    "url": "https://github.com/barada02/Mordern_Web_Art/issues"
+    "url": "https://github.com/barada02/kalpa-shan/issues"
   },
   "keywords": [
+    "kalpa-shan",
     "shanshui",
+    "shan-shui",
     "generative-art",
     "procedural",
     "landscape",
     "ink",
+    "ink-wash",
     "svg",
     "chinese-painting",
     "web-component",

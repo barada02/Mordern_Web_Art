@@ -1,10 +1,10 @@
-import 'shanshui/element'
-import type { ShanShuiElement } from 'shanshui/element'
-import { randomSeed } from 'shanshui'
+import 'kalpa-shan/element'
+import type { KalpaShanElement } from 'kalpa-shan/element'
+import { randomSeed } from 'kalpa-shan'
 import './style.css'
 import './element.css'
 
-const live = document.querySelector<ShanShuiElement>('#live')!
+const live = document.querySelector<KalpaShanElement>('#live')!
 const distances = ['level', 'high', 'deep']
 
 document.getElementById('next')!.addEventListener('click', () => live.setAttribute('seed', randomSeed()))
